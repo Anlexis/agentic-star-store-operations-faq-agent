@@ -1,0 +1,43 @@
+[project]
+name = "ret-c2-028"
+version = "0.1.0"
+description = "StoreOperationsFAQAgent — AgentCore Template"
+requires-python = ">=3.11"
+dependencies = [
+    "agenticstar-agentcore[marketplace,openai]==1.0.3",]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.1.1",
+    "pytest-cov==5.0.0",
+    "pytest-asyncio==0.23.6",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+    "types-PyYAML==6.0.12.20260815",
+]
+
+[build-system]
+requires = ["setuptools==68.2.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+# The framework wheel ships no type information, so every class imported from it
+# resolves to Any. Without these two settings strict mode rejects the template's
+# own well-typed code for defects that live in the dependency.
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = ["framework.*", "shared.*", "langgraph.*", "langchain_core.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# AgentState resolves to Any from the untyped wheel, so `class State(AgentState)`
+# fails `valid-type` on every field. One cause, not one error per field.
+module = ["src.schemas.state"]
+disable_error_code = ["valid-type"]

@@ -1,0 +1,21 @@
+# Runtime parameters — loaded by AgentRegistry, passed as Graph(config=...).
+# Separate from config/agent.yaml (the static manifest).
+
+max_retry: 3
+timeout_s: 30
+
+# Retrieval settings. Read by DomainWorkflowGraph.resolve_retrieval_config(),
+# which bounds-checks every value and fails compilation rather than degrading
+# silently, then seeds them into the inner graph's initial state.
+retrieval:
+  vector_store:
+    collection: ret_store_operations_faq_kb
+  top_k: 5
+  # Relevance bar for the external vector-store retriever (cosine similarity).
+  score_threshold: 0.68
+  # Relevance bar for the built-in lexical retriever used when the caller sends
+  # its own passages. Lexical coverage and cosine similarity are different
+  # scales — a single number cannot serve both, and reusing the vector bar here
+  # would reject every passage and report "not found" for every question.
+  caller_corpus_score_threshold: 0.25
+  hybrid_search: true
